@@ -6,7 +6,7 @@ def find_solution_one(passwords):
 
     for password in passwords:
         char_count = password['password'].count(password['char'])
-        if char_count >= password['low'] and char_count <= password['high']:
+        if password['low'] <= char_count <= password['high']:
             correct_passwords += 1
 
     print(f'Solution 1: {correct_passwords}')
@@ -25,13 +25,12 @@ def find_solution_two(passwords):
 
 
 def main():
-    with open('input.txt', 'r') as input_file:
-        values = input_file.readlines()
+    lines = open('input.txt', 'r').readlines()
 
     passwords = []
 
-    for value in values:
-        parts = re.findall(r"[\w']+", value)
+    for line in lines:
+        parts = re.findall(r"[\w']+", line)
         passwords.append({'low': int(parts[0]), 'high': int(parts[1]), 'char': parts[2], 'password': parts[3]})
 
     find_solution_one(passwords)

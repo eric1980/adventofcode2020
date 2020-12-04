@@ -1,22 +1,6 @@
 import re
 
 
-def parse_passports(data):
-    passports = []
-
-    for passport in data.split('\n\n'):
-        passports.append(create_passport(re.findall(r'\S+:\S+', passport)))
-
-    return passports
-
-
-def create_passport(values):
-    password = {}
-    for value in values:
-        password[value.split(':')[0]] = value.split(':')[1]
-    return password
-
-
 def has_reqiured_fields(passport):
     return all(key in passport for key in ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'])
 
@@ -59,7 +43,7 @@ def is_pid(value):
 def main():
     data = open('input.txt', 'r').read()
 
-    passports_all = parse_passports(data)
+    passports_all = [dict(re.findall(r'(\S+):(\S+)', passport)) for passport in data.split('\n\n')]
     passports_fields_ok = list(filter(has_reqiured_fields, passports_all))
     passports_data_ok = list(filter(has_correct_data, passports_fields_ok))
 

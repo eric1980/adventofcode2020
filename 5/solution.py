@@ -1,4 +1,3 @@
-
 def get_seat(code):
     row = list(range(0, 128))
     col = list(range(0, 8))
@@ -12,27 +11,15 @@ def get_seat(code):
     return {'row': row[0], 'col': col[0], 'id': row[0] * 8 + col[0]}
 
 
-def find_my_seat(seats):
-    ids = [id['id'] for id in seats]
-    ids.sort()
-
-    for i in range(1, len(ids)):
-        if ids[i] != ids[i-1] + 1:
-            my_id = ids[i-1] + 1
-            break
-
-    return my_id
-
-
 def main():
     data = open('input.txt', 'r').readlines()
 
     seats = [get_seat(code) for code in data]
-    highest_id = max([id['id'] for id in seats])
-    my_seat = find_my_seat(seats)
+    ids = [seat['id'] for seat in seats]
+    my_seat = set(range(min(ids), max(ids))) - set(ids)
 
-    print(f'Solution 1: {highest_id}')
-    print(f'Solution 2: {my_seat}')
+    print(f'Solution 1: {max(ids)}')
+    print(f'Solution 2: {next(iter(my_seat))}')
 
 
 if __name__ == "__main__":

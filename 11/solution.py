@@ -1,19 +1,19 @@
 from copy import deepcopy
 
 
-def run_iteration(seats):
+def run_iteration(seats, check_function, occupied_limit):
     new_seat_map = deepcopy(seats)
     has_changed = False
 
     for row in range(1, len(seats)-1):
         for col in range(1, len(seats[0])-1):
 
-            occupied = adjacent_occupied(seats, row, col)
+            occupied = check_function(seats, row, col)
 
             if seats[row][col] == 'L' and occupied == 0:
                 new_seat_map[row][col] = '#'
                 has_changed = True
-            elif seats[row][col] == '#' and occupied >= 4:
+            elif seats[row][col] == '#' and occupied >= occupied_limit:
                 new_seat_map[row][col] = 'L'
                 has_changed = True
 
@@ -26,10 +26,15 @@ def adjacent_occupied(seats, row, col):
            seats[row+1][col-1:col+2].count('#')
 
 
-def find_solution_one(seats):
+def visible_occupied(seats, row, col):
+    # Dummy
+    return 1
+
+
+def count_stable_seats(seats, check_function, occupied_limit):
     has_changed = True
     while has_changed:
-        has_changed, seats = run_iteration(seats)
+        has_changed, seats = run_iteration(seats, check_function, occupied_limit)
 
     return sum([row.count('#') for row in seats])
 
@@ -40,6 +45,7 @@ def print_seat_map(seats):
 
 
 def main():
+    # Get data and add 'border'
     seats = [list('.' + value.strip() + '.') for value in open('input.txt', 'r').readlines()]
     seats.insert(0, '.'*len(seats[0]))
     seats.append('.'*len(seats[0]))
@@ -59,12 +65,20 @@ def main():
         list('............')
     ]
 
-    test_result = find_solution_one(test_data)
-    # solution_one = find_solution_one(seats)
+    test_result_one = count_stable_seats(test_data, adjacent_occupied, 4)
+    test_result_two = count_stable_seats(test_data, visible_occupied, 5)
 
-    print(f'Test result: {test_result}')
-    # print(f'Solution 1: {solution_one}')
-    # print(f'Solution 2: {}')
+    print(f'Test result 1: {test_result_one}')
+    print(f'Test result 2: {test_result_two}')
+
+    assert test_result_one == 37, 'Test 1 does not pass'
+    assert test_result_two == 26, 'Test 2 does not pass'
+
+    solution_one = count_stable_seats(seats, adjacent_occupied, 4)
+    solution_two = count_stable_seats(seats, visible_occupied, 5)
+
+    print(f'Solution 1: {solution_one}')
+    print(f'Solution 2: {solution_two}')
 
 
 if __name__ == "__main__":

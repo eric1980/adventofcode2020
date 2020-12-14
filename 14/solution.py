@@ -4,7 +4,7 @@ import re
 class CPU():
     def __init__(self, data):
         self.bitmask_set = 0
-        self.bitmask_clear = 0xFFFFFFFFF
+        self.bitmask_clear = 0
         self.memory = {}
         self.run_instructions(data)
 
@@ -28,10 +28,20 @@ class CPU_v1(CPU):
 
 class CPU_v2(CPU):
     def set_mask(self, mask):
-        pass
+        self.permutations = [0]
+        self.bitmask_clear = 0
+        self.bitmask_set = sum([2**(35-i) for i, e in enumerate(mask) if e == '1'])
+        x_positions = [35-i for i, e in enumerate(mask) if e == 'X']
+
+        for permutation in [f'{i:b}' for i in range(1, 2**len(x_positions))]:
+            address = sum([2**x_positions[len(permutation)-i-1] for i, v in enumerate(permutation) if v == '1'])
+            self.permutations.append(address)
+            self.bitmask_clear |= address
 
     def set_memory(self, address, value):
-        pass
+        modified_address = address & ~self.bitmask_clear | self.bitmask_set
+        for permutation in self.permutations:
+            self.memory[modified_address | permutation] = value
 
 
 def find_solution(cpu_name, data):
@@ -51,10 +61,10 @@ def main():
     assert test_result == 165, 'Test 1 does not pass'
     print(f'Solution 1: {find_solution(CPU_v1, data)}')
 
-    # test_result = find_solution(CPU_v2, test_data_2)
-    # print(f'\nTest result 2: {test_result}')
-    # assert test_result == 208, 'Test 2 does not pass'
-    # print(f'Solution 2: {find_solution(CPU_v2, data)}')
+    test_result = find_solution(CPU_v2, test_data_2)
+    print(f'\nTest result 2: {test_result}')
+    assert test_result == 208, 'Test 2 does not pass'
+    print(f'Solution 2: {find_solution(CPU_v2, data)}')
 
 
 if __name__ == "__main__":

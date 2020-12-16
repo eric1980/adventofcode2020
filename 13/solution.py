@@ -1,5 +1,6 @@
 from math import prod
 
+
 def find_solution_one(earliest_time, bus_ids):
     bus_departures = dict([((earliest_time // int(bus_id) + 1) * int(bus_id), int(bus_id)) for bus_id in bus_ids if bus_id != 'x'])
 
@@ -10,17 +11,17 @@ def find_solution_one(earliest_time, bus_ids):
 
 
 def find_solution_two(bus_ids):
-    mods = [(int(v)-i) % int(v) for i, v in enumerate(bus_ids) if v != 'x']
-    busses = [int(bus_id) for bus_id in bus_ids if bus_id != 'x']
-    factors = [prod(busses) // bus_id for bus_id in busses]
+    rests = [(int(v) - i) % int(v) for i, v in enumerate(bus_ids) if v != 'x']
+    mods = [int(bus_id) for bus_id in bus_ids if bus_id != 'x']
+    terms = [prod(mods) // bus_id for bus_id in mods]
 
-    for i, factor in enumerate(factors):
+    for i, term in enumerate(terms):
         multiplier = 1
-        while (factor * multiplier) % busses[i] != mods[i]:
+        while (term * multiplier) % mods[i] != rests[i]:
             multiplier += 1
-        factors[i] = factor * multiplier
+        terms[i] = term * multiplier
 
-    return sum(factors) % prod(busses)
+    return sum(terms) % prod(mods)
 
 
 def main():

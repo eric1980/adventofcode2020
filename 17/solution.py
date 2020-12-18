@@ -2,7 +2,7 @@ from collections import defaultdict
 from copy import deepcopy
 
 class PocketDimension():
-    def __init__(self, initialisation, margin=10):
+    def __init__(self, initialisation, margin=10, use_forth_dimension=False):
 
         self.dimension = [[list([0] * (len(initialisation[0]) + margin * 2))
             for i in range((len(initialisation) + margin * 2))]
@@ -56,11 +56,8 @@ def print_dim(data):
         print('')
 
 
-def count_surrounding_active(data, x, y, z):
-    pass
-
-def get_active_cubes(data, iterations):
-    pocket_dimension = PocketDimension(data)
+def get_active_cubes(data, iterations, use_forth_dimension=False):
+    pocket_dimension = PocketDimension(data, use_forth_dimension=use_forth_dimension)
     for _ in range(iterations):
         pocket_dimension.cycle()
 
@@ -79,19 +76,18 @@ def main():
     ]
 
     test_result_one = get_active_cubes(test_data, 6)
-    # test_result_two = find_solution_two(data)
-
     print(f'Test result 1: {test_result_one}')
-    # print(f'Test result 2: {test_result_two}')
-
     assert test_result_one == 112, 'Test 1 does not pass'
-    # assert test_result_two == 26, 'Test 2 does not pass'
+
+    test_result_two = get_active_cubes(test_data, 6, use_forth_dimension=True)
+    print(f'Test result 2: {test_result_two}')
+    assert test_result_two == 848, 'Test 2 does not pass'
 
     solution_one = get_active_cubes(data, 6)
-    # solution_two = find_solution_two(data)
-
     print(f'Solution 1: {solution_one}')
-    # print(f'Solution 2: {solution_two}')
+
+    solution_two = get_active_cubes(data, 6, use_forth_dimension=True)
+    print(f'Solution 2: {solution_two}')
 
 
 if __name__ == "__main__":
